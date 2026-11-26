@@ -1,0 +1,38 @@
+$ docker compose ps -a
+NAME                           IMAGE                   COMMAND                  SERVICE         CREATED              STATUS                          PORTS
+kampus-yemek-frontend-1        kampus-yemek-frontend   "httpd-foreground -D…"   frontend        About a minute ago   Up About a minute (healthy)     127.0.0.1:8180->80/tcp
+kampus-yemek-mysql-primary-1   mysql:8.4               "docker-entrypoint.s…"   mysql-primary   7 minutes ago        Up 7 minutes (healthy)          33060/tcp, 127.0.0.1:3317->3306/tcp
+kampus-yemek-mysql-replica-1   mysql:8.4               "docker-entrypoint.s…"   mysql-replica   7 minutes ago        Up 4 minutes (healthy)          33060/tcp, 127.0.0.1:3318->3306/tcp
+kampus-yemek-redis-1           redis:7.4-alpine        "docker-entrypoint.s…"   redis           7 minutes ago        Up 7 minutes (healthy)          127.0.0.1:6389->6379/tcp
+kampus-yemek-replica-setup-1   mysql:8.4               "bash /replica-setup…"   replica-setup   7 minutes ago        Exited (0) About a minute ago   
+kampus-yemek-uygulama-1        kampus-yemek-uygulama   "docker-entrypoint.s…"   uygulama        About a minute ago   Up About a minute (healthy)     8000/tcp
+GET /api/durum {'kaynak': {'id': 1, 'salt_okunur': 0}, 'replika': {'id': 2, 'salt_okunur': 1}, 'redis': 'PONG'}
+Apache ana sayfa HTTP 200
+GET /api/bakiye → HTTP 401 Giriş yapın.
+POST /api/oturum → HTTP 401 E-posta veya şifre yanlış.
+POST /api/oturum → HTTP 403 İstek doğrulanamadı.
+POST /api/oturum → HTTP 200 
+POST /api/oturum → HTTP 200 
+POST /api/oturum → HTTP 200 
+GET /api/yonetim → HTTP 403 Yönetici yetkisi gerekiyor.
+GET /api/oturum → HTTP 200 
+GET /api/oturum → HTTP 200 
+GET /api/menu/gun?yer=1&ogun=2 → HTTP 200 
+Günlük menü: 44 1110 kcal
+GET /api/menu/hafta?yer=1 → HTTP 200 
+GET /api/menu/hafta?yer=1 → HTTP 200 
+Öğle fiyatları, öğrenci: 40.00 personel: 90.00
+POST /api/bakiye → HTTP 201 
+GET /api/bakiye → HTTP 200 
+POST /api/bakiye → HTTP 400 Yükleme tutarı 10 ile 1000 TL arasında olmalıdır.
+POST /api/oturum → HTTP 200 
+GET /api/puan → HTTP 200 
+POST /api/puan → HTTP 201 
+POST /api/puan → HTTP 400 Bu kayıt zaten var.
+Değerlendirme menüsü: 1
+DELETE /api/oturum → HTTP 200 
+GET /api/yonetim → HTTP 200 
+POST /api/yonetim/menu → HTTP 201 
+GET /api/yonetim → HTTP 200 
+Oluşturulan yönetim test menüsü: 85 2026-12-05
+POST /api/yonetim/menu → HTTP 403 Yönetici yetkisi gerekiyor.

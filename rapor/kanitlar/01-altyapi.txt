@@ -1,0 +1,39 @@
+$ docker compose ps -a
+NAME                           IMAGE                   COMMAND                  SERVICE         CREATED         STATUS                     PORTS
+kampus-yemek-frontend-1        kampus-yemek-frontend   "httpd-foreground -D…"   frontend        2 minutes ago   Up 2 minutes (healthy)     127.0.0.1:8180->80/tcp
+kampus-yemek-mysql-primary-1   mysql:8.4               "docker-entrypoint.s…"   mysql-primary   2 minutes ago   Up 2 minutes (healthy)     33060/tcp, 127.0.0.1:3317->3306/tcp
+kampus-yemek-mysql-replica-1   mysql:8.4               "docker-entrypoint.s…"   mysql-replica   2 minutes ago   Up 2 minutes (healthy)     33060/tcp, 127.0.0.1:3318->3306/tcp
+kampus-yemek-redis-1           redis:7.4-alpine        "docker-entrypoint.s…"   redis           2 minutes ago   Up 2 minutes (healthy)     127.0.0.1:6389->6379/tcp
+kampus-yemek-replica-setup-1   mysql:8.4               "bash /replica-setup…"   replica-setup   2 minutes ago   Exited (0) 2 minutes ago
+$ docker compose exec -T redis redis-cli PING
+PONG
+Primary ve replica: SELECT id,bakiye FROM kullanicilar WHERE id=7
+id	bakiye
+7	355.00
+Primary: CALL sp_bakiye_yukle(7, 10.00)
+hareket_id	bakiye
+455	365.00
+Primary ve replica: SELECT id,bakiye FROM kullanicilar WHERE id=7
+id	bakiye
+7	365.00
+Replica: SELECT @@read_only AS read_only, @@super_read_only AS super_read_only
+read_only	super_read_only
+1	1
+Replica: UPDATE kullanicilar SET bakiye=bakiye WHERE id=7
+ERROR 1290 (HY000) at line 1: The MySQL server is running with the --super-read-only option so it cannot execute this statement
+$ docker compose stop mysql-replica
+Container kampus-yemek-mysql-replica-1  Stopping
+ Container kampus-yemek-mysql-replica-1  Stopped
+Primary: CALL sp_bakiye_yukle(7, 10.00)
+hareket_id	bakiye
+456	375.00
+$ docker compose start mysql-replica
+Container kampus-yemek-mysql-replica-1  Starting
+ Container kampus-yemek-mysql-replica-1  Started
+Primary ve replica: SELECT id,bakiye FROM kullanicilar WHERE id=7
+id	bakiye
+7	375.00
+Replica: SHOW REPLICA STATUS\G (ilgili alanlar)
+Replica_IO_Running: Yes
+Replica_SQL_Running: Yes
+Seconds_Behind_Source: 0

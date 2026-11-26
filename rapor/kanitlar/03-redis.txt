@@ -1,0 +1,32 @@
+$ redis-cli DEL menu:1:2026-11-25:2
+1
+GET /api/menu/gun?yer=1&ogun=2 → HTTP 200 
+GET /api/menu/gun?yer=1&ogun=2 → HTTP 200 
+$ redis-cli --scan --pattern 'menu:*'
+menu:1:2026-11-25:2
+$ redis-cli TTL menu:1:2026-11-25:2
+2919
+GET /api/yonetim → HTTP 200 
+PUT /api/yonetim/menu/44 → HTTP 200 
+$ redis-cli EXISTS menu:1:2026-11-25:2
+0
+GET /api/menu/gun?yer=1&ogun=2 → HTTP 200 
+Güncellenen yemek: Aşure
+$ docker compose logs uygulama (ilgili satırlar)
+CACHE MISS menu:1:2026-11-25:2
+CACHE HIT menu:1:2026-11-25:2
+CACHE DELETE menu:1:2026-11-25:2
+CACHE MISS menu:1:2026-11-25:2
+PUT /api/yonetim/menu/44 → HTTP 200 
+$ redis-cli TTL oturum:<maskeli>
+GET /api/oturum → HTTP 200 
+1800 1798 1800
+$ docker compose restart uygulama
+Container kampus-yemek-uygulama-1  Restarting
+ Container kampus-yemek-uygulama-1  Started
+GET /api/oturum → HTTP 200 
+Aynı çerezle aynı kullanıcı: 7
+DELETE /api/oturum → HTTP 200 
+$ redis-cli EXISTS oturum:<maskeli>
+0
+GET /api/oturum → HTTP 401 Giriş yapın.

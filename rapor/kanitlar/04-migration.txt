@@ -1,0 +1,66 @@
+Primary: eski şemadaki günlük menü, Redis temizlik testi için.
+{"ogun": "Öğle", "tarih": "2026-11-25", "menu_id": 44}
+$ redis-cli --scan --pattern 'menu:*'
+menu:1:2026-11-25:2
+$ docker compose exec -T mysql-primary ... < db/init/04_degisiklik.sql
+MySQL komutu çıkış kodu: 0
+Rezervasyon ve bakiye hareketlerinin önceki toplamları aynı:
+COUNT(*)	SUM(ucret)
+367	16250.00
+COUNT(*)	SUM(tutar)
+456	9757.50
+Replika: SELECT porsiyon, COUNT(*) FROM rezervasyonlar GROUP BY porsiyon
+porsiyon	COUNT(*)
+tam	367
+Replika: SHOW CREATE TABLE rezervasyonlar\G; SHOW CREATE TABLE kullanici_alerjenleri\G
+*************************** 1. row ***************************
+       Table: rezervasyonlar
+Create Table: CREATE TABLE `rezervasyonlar` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `kullanici_id` int unsigned NOT NULL,
+  `menu_id` int unsigned NOT NULL,
+  `durum` enum('aktif','kullanildi','iptal') CHARACTER SET utf8mb4 COLLATE utf8mb4_tr_0900_ai_ci NOT NULL DEFAULT 'aktif',
+  `ucret` decimal(8,2) NOT NULL,
+  `olusturma` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `kullanma_zamani` datetime DEFAULT NULL,
+  `iptal_zamani` datetime DEFAULT NULL,
+  `porsiyon` enum('tam','yarim') COLLATE utf8mb4_tr_0900_ai_ci NOT NULL DEFAULT 'tam',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_rezervasyon` (`kullanici_id`,`menu_id`),
+  KEY `ix_rezervasyon_menu_durum` (`menu_id`,`durum`),
+  CONSTRAINT `fk_rez_kullanici` FOREIGN KEY (`kullanici_id`) REFERENCES `kullanicilar` (`id`),
+  CONSTRAINT `fk_rez_menu` FOREIGN KEY (`menu_id`) REFERENCES `menuler` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=368 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_tr_0900_ai_ci
+*************************** 1. row ***************************
+       Table: kullanici_alerjenleri
+Create Table: CREATE TABLE `kullanici_alerjenleri` (
+  `kullanici_id` int unsigned NOT NULL,
+  `alerjen_id` tinyint unsigned NOT NULL,
+  PRIMARY KEY (`kullanici_id`,`alerjen_id`),
+  KEY `ka_alerjen` (`alerjen_id`),
+  CONSTRAINT `ka_alerjen` FOREIGN KEY (`alerjen_id`) REFERENCES `alerjenler` (`id`),
+  CONSTRAINT `ka_kullanici` FOREIGN KEY (`kullanici_id`) REFERENCES `kullanicilar` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_tr_0900_ai_ci
+$ redis-cli DEL menu:1:2026-11-25:2
+1
+$ redis-cli --scan --pattern 'menu:*'
+(boş)
+POST /api/oturum → HTTP 200 
+GET /api/menu/hafta?yer=1 → HTTP 200 
+POST /api/rezervasyon → HTTP 400 Kahvaltıda yarım porsiyon seçilemez.
+GET /api/oturum → HTTP 200 
+POST /api/rezervasyon → HTTP 201 
+Tam / yarım fiyat: 40.00 24.00
+Rezervasyon: 368 porsiyon: yarim bakiye: 361.00
+POST /api/rezervasyon → HTTP 400 Bu menü için zaten rezervasyonunuz var.
+GET /api/rezervasyon → HTTP 200 
+DELETE /api/rezervasyon/368 → HTTP 200 
+İade: 24.00 bakiye: 385.00
+PUT /api/profil → HTTP 200 
+PUT /api/profil → HTTP 400 Seçilen kayıt mevcut değil.
+GET /api/menu/gun?yer=1&ogun=2 → HTTP 200 
+GET /api/menu/gun?yer=1&ogun=2 → HTTP 200 
+Kişisel Gluten uyarısı: Şehriyeli Pilav
+Primary ve replica bakiye tutarlılığı:
+tutarsiz
+0

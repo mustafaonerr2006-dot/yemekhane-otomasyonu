@@ -1,0 +1,9 @@
+400 px · Bcrypt ile giriş tamamlandı.
+400 px · Günün menüsü · içerik yüklendi, yatay sayfa taşması yok.
+400 px · Haftalık menü · içerik yüklendi, yatay sayfa taşması yok.
+400 px · Rezervasyonlarım · içerik yüklendi, yatay sayfa taşması yok.
+400 px · Bakiye hesabı · içerik yüklendi, yatay sayfa taşması yok.
+400 px · Değerlendirme · içerik yüklendi, yatay sayfa taşması yok.
+400 px · Alerjen profili · içerik yüklendi, yatay sayfa taşması yok.
+400 px · Yönetim · içerik yüklendi, yatay sayfa taşması yok.
+Tarayıcı JavaScript hatası: 0.

@@ -1,0 +1,14 @@
+$ docker compose -p kampus-yemek-kurulum ps -a
+NAME                                   IMAGE                           COMMAND                  SERVICE         CREATED              STATUS                          PORTS
+kampus-yemek-kurulum-frontend-1        kampus-yemek-kurulum-frontend   "httpd-foreground -D…"   frontend        About a minute ago   Up About a minute (healthy)     127.0.0.1:8280->80/tcp
+kampus-yemek-kurulum-mysql-primary-1   mysql:8.4                       "docker-entrypoint.s…"   mysql-primary   About a minute ago   Up About a minute (healthy)     33060/tcp, 127.0.0.1:3327->3306/tcp
+kampus-yemek-kurulum-mysql-replica-1   mysql:8.4                       "docker-entrypoint.s…"   mysql-replica   About a minute ago   Up About a minute (healthy)     33060/tcp, 127.0.0.1:3328->3306/tcp
+kampus-yemek-kurulum-redis-1           redis:7.4-alpine                "docker-entrypoint.s…"   redis           About a minute ago   Up About a minute (healthy)     127.0.0.1:6399->6379/tcp
+kampus-yemek-kurulum-replica-setup-1   mysql:8.4                       "bash /replica-setup…"   replica-setup   About a minute ago   Exited (0) About a minute ago   
+kampus-yemek-kurulum-uygulama-1        kampus-yemek-kurulum-uygulama   "docker-entrypoint.s…"   uygulama        About a minute ago   Up About a minute (healthy)     8000/tcp
+
+$ docker compose -p kampus-yemek-kurulum logs mysql-primary (migration satırı)
+mysql-primary-1  | 2026-11-25 23:10:30+03:00 [Note] [Entrypoint]: /usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-initdb.d/04_degisiklik.sql
+
+$ curl -fsS http://localhost:8280/api/durum
+{"kaynak":{"id":1,"salt_okunur":0},"replika":{"id":2,"salt_okunur":1},"redis":"PONG"}

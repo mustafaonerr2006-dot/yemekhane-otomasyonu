@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kampüs Yemek Sistemi</title>
+  <link rel="stylesheet" href="/css/kampus.css">
+  <script type="module" src="/js/panel.js"></script>
+</head>
+<body>
+  <header>
+    <div class="sayfa baslik">
+      <p class="marka">Kampüs Yemek Sistemi</p>
+      <div id="hesap" hidden>
+        <span id="kisi"></span>
+        <strong id="kalan"></strong>
+        <button class="acik" type="button" id="cikis">Çıkış</button>
+      </div>
+    </div>
+  </header>
+  <main class="sayfa">
+    <p id="bildirim" role="status" aria-live="polite" hidden></p>
+    <section id="giris" class="kutu giris">
+      <h1>Oturum aç</h1>
+      <form id="giris-formu">
+        <label>E-posta <input type="email" name="eposta" autocomplete="username" required></label>
+        <label>Şifre <input type="password" name="sifre" autocomplete="current-password" required></label>
+        <button>Giriş yap</button>
+      </form>
+    </section>
+    <div id="panel" hidden>
+      <nav aria-label="Yemekhane bölümleri">
+        <a href="#gun">Günün menüsü</a>
+        <a href="#hafta">Haftalık menü</a>
+        <a href="#rezervasyon">Rezervasyonlar</a>
+        <a href="#bakiye">Bakiye</a>
+        <a href="#puan">Değerlendirme</a>
+        <a href="#profil">Alerjen profili</a>
+        <a href="#yonetim" id="yonetim" hidden>Yönetim</a>
+      </nav>
+      <section id="icerik" aria-labelledby="ekran-basligi"></section>
+    </div>
+  </main>
+</body>
+</html>
